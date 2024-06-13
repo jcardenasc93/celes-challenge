@@ -1,4 +1,3 @@
-from functools import reduce
 from typing import List
 
 import pandas as pd
@@ -14,8 +13,11 @@ class SalesService:
     def sales_by_period(self) -> float:
         filtered_data = self._filter_data(load_data())
         # Calcs the total per sale
-        filtered_data["Total"] = filtered_data["Qty"] * filtered_data["CostAmount"]
-        total: float = reduce(lambda x, y: x + y, filtered_data["Total"])
+        total_df = (
+            pd.DataFrame()
+        )  # Creates new dataframe to avoiding dataframe copy warning
+        total_df["Total"] = filtered_data["Qty"] * filtered_data["CostAmount"]
+        total = total_df["Total"].sum()
         return round(total, 2)
 
     def _filter_data(self, data: pd.DataFrame) -> pd.DataFrame:
