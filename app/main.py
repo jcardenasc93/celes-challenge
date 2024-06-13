@@ -7,6 +7,7 @@ from pandas import DataFrame
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.sales import router as sales_router
+from app.config import get_logger
 from app.dataloader import load_data
 from app.schemas.base_response import BaseResponse
 
@@ -60,6 +61,7 @@ async def health_check():
     try:
         app_data = load_data()
     except Exception as e:
+        get_logger().error(e)
         raise HTTPException(status_code=500, detail=e)
 
     return Response(status_code=204)
