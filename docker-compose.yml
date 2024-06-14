@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    platform: linux/amd64
+    command: "fastapi run" # Run in development mode
+    container_name: "celes-sales"
+    restart: always  # This line enables automatic restart
+    ports:
+      - "8080:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    stdin_open: true
+    tty: true
+
