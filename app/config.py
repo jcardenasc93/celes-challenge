@@ -89,5 +89,6 @@ def build_fastapi_app(dependencies: Optional[Sequence[Callable]] = None) -> Fast
         dependencies=app_dependencies,
         description="Celes microservice to expose sales related data",
         responses={400: {"model": BaseResponse}, 404: {"model": BaseResponse}},
+        lifespan=load_app_data,
     )
     return app

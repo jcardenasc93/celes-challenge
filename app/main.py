@@ -3,6 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app.api.auth import router as auth_router
 from app.api.sales import router as sales_router
 from app.config import build_fastapi_app, get_logger
 from app.dataloader import load_data
@@ -10,6 +11,7 @@ from app.schemas.base_response import BaseResponse
 
 app = build_fastapi_app()
 app.include_router(sales_router)
+app.include_router(auth_router)
 
 
 # App exceptions handlers
