@@ -4,6 +4,7 @@ from functools import cached_property, lru_cache
 from typing import Callable, Dict, Optional, Sequence
 
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.dataloader import load_data
@@ -28,6 +29,7 @@ class AppSettings(BaseSettings):
     FIREBASE_STORAGE_BUCKET: str = ""
     FIREBASE_MSG_SENDER_ID: str = ""
     FIREBASE_APP_ID: str = ""
+    ALLOWED_ORIGINS: str = ""
 
     @cached_property
     def APP_LOG_LEVEL(self) -> int:
@@ -91,4 +93,15 @@ def build_fastapi_app(dependencies: Optional[Sequence[Callable]] = None) -> Fast
         responses={400: {"model": BaseResponse}, 404: {"model": BaseResponse}},
         lifespan=load_app_data,
     )
+
+    settings = app_settings()
+    if app_settings().ENVIRONMENT == "production":
+        allow_all = settings.ALLOWED_ORIGINS.split(",")
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=allow_all,
+            allow_credentials=True,
+            allow_methods=allow_all,
+            allow_headers=allow_all,
+        )
     return app
