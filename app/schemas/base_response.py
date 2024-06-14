@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class BaseResponse(BaseModel):
-    data: Optional[Dict[str, Any]] = Field(
+    data: Optional[Any] = Field(
         default=None,
     )
 
