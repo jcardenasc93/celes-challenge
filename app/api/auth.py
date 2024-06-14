@@ -1,7 +1,9 @@
 import json
+from typing import Annotated
 
 import pyrebase
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.security import OAuth2PasswordBearer
 from firebase_admin import auth, credentials
 from firebase_admin import initialize_app as firebase_init_app
 from requests.exceptions import HTTPError
@@ -74,8 +76,34 @@ async def signin(login_data: UserAuthSchema) -> AuthTokenResponseSchema:
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"An error ocurred during JWT token generation. Try it later",
         )
-    else:
-        token = AccessTokenSchema(
-            token_id=user["idToken"], expires_in=user["expiresIn"]
+    token = AccessTokenSchema(token_id=user["idToken"], expires_in=user["expiresIn"])
+    return AuthTokenResponseSchema(data=token)
+
+
+async def validate_token(request: Request) -> bool:
+    token = request.headers.get("Authorization")
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing authentication token",
         )
-        return AuthTokenResponseSchema(data=token)
+    try:
+        auth.verify_id_token(token)
+    except auth.TokenSignError:
+        logger.warning("Atempt to use an invalid token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication token",
+        )
+    except auth.ExpiredIdTokenError:
+        logger.warning("Atempt to use an expired token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Given token expired"
+        )
+    except Exception as e:
+        logger.error(msg="Token couldn't be validated", exc_info=e)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token couldn't be validated",
+        )
+    return True

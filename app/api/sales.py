@@ -4,6 +4,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing_extensions import Self
 
+from app.api.auth import validate_token
 from app.config import get_logger
 from app.constants import FILTER_OPERATORS, KEYS_CONSTANTS
 from app.dataloader import Filter
@@ -11,8 +12,7 @@ from app.schemas.sales_response import SalesPeriodSchema, SalesTotalAvgSchema
 from app.services.sales import SalesService
 
 router = APIRouter(
-    prefix="/sales",
-    tags=["sales"],
+    prefix="/sales", tags=["sales"], dependencies=[Depends(validate_token)]
 )
 
 
