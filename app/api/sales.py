@@ -119,6 +119,12 @@ async def get_sales_by_period(
     - KeyProduct: Filter by product key
     - KeyStore: Filter by store"""
     keys_validator(key_employee, key_product, key_store)
+    # Validates dates
+    if start_period > end_period:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Start period value couldn't be greater than end period one",
+        )
     # Builds proper filters
     filter_builder = FilterBuilder()
     start_period_filter = Filter(

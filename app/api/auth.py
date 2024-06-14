@@ -1,9 +1,7 @@
 import json
-from typing import Annotated
 
 import pyrebase
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import APIRouter, HTTPException, Request, status
 from firebase_admin import auth, credentials
 from firebase_admin import initialize_app as firebase_init_app
 from requests.exceptions import HTTPError
