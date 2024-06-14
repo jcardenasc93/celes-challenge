@@ -37,6 +37,8 @@ class TestSalesServiceFiltering:
 
 
 class TestSalesServiceSalesPeriod:
+    """Test sales by period feature"""
+
     def test_employee_filter(
         self,
         testing_data: pd.DataFrame,
@@ -64,6 +66,8 @@ class TestSalesServiceSalesPeriod:
 
 
 class TestSalesServiceTotalAvg:
+    """Test total & average sales feature"""
+
     def test_store_filter(
         self,
         testing_data: pd.DataFrame,

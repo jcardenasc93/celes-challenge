@@ -167,3 +167,6 @@ data/
 # Python versioning
 .envrc
 .tool-versions
+
+# Firebase key
+firebase_key.json

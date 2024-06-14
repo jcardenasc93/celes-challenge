@@ -1,27 +1,14 @@
-from contextlib import asynccontextmanager
-
-from fastapi import FastAPI, HTTPException, Response, status
+from fastapi import HTTPException, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from pandas import DataFrame
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.sales import router as sales_router
-from app.config import get_logger
+from app.config import build_fastapi_app, get_logger
 from app.dataloader import load_data
 from app.schemas.base_response import BaseResponse
 
-app_data = DataFrame()
-
-
-@asynccontextmanager
-async def load_app_data(app: FastAPI):
-    """Loading parquet data to be used by the microservice"""
-    app_data = load_data()
-    yield
-
-
-app = FastAPI(lifespan=load_app_data)
+app = build_fastapi_app()
 app.include_router(sales_router)
 
 
@@ -59,7 +46,7 @@ async def validation_exception_handler(request, exc):
 async def health_check():
     """Simple health check endpoint"""
     try:
-        app_data = load_data()
+        load_data()
     except Exception as e:
         get_logger().error(e)
         raise HTTPException(status_code=500, detail=e)
