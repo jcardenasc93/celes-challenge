@@ -91,7 +91,12 @@ async def get_total_avg_sales(
         filter_builder.with_store_key(key_store)
 
     service = SalesService(filters=filter_builder.filters)
-    total_avg = service.total_avg_sales()
+    try:
+        total_avg = service.total_avg_sales()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
+        )
     return SalesTotalAvgSchema(data=total_avg)
 
 
@@ -134,6 +139,10 @@ async def get_sales_by_period(
         filter_builder.with_store_key(key_store)
 
     service = SalesService(filters=filter_builder.filters)
-    total_sales = service.sales_by_period()
-
+    try:
+        total_sales = service.sales_by_period()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
+        )
     return SalesPeriodSchema(data={"amount": total_sales})
