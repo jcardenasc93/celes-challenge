@@ -2,6 +2,7 @@ import pandas as pd
 import pytest
 
 from app.constants import KEYS_CONSTANTS
+from app.schemas.sales_response import TotalAvgSales
 
 
 @pytest.fixture
@@ -39,6 +40,13 @@ def stores():
 def total_sales_period_employee(sales_costs, sales_qtys) -> float:
     total = (sales_costs[3] * sales_qtys[3]) + (sales_costs[4] * sales_qtys[4])
     return round(total, 2)
+
+
+@pytest.fixture
+def total_avg_sales_store(sales_costs, sales_qtys) -> TotalAvgSales:
+    total = (sales_costs[3] * sales_qtys[3]) + (sales_costs[4] * sales_qtys[4])
+    avg = total / 2  # Two sales were done in S2
+    return TotalAvgSales(total=total, average=avg)
 
 
 @pytest.fixture
